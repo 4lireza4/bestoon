@@ -83,8 +83,14 @@ target/
 *.pot
 *.pyc
 __pycache__/
+*/__pycache__/
 local_settings.py
 
 .env
 db.sqlite3
 .idea/
+
+bestoon/__pycache__/__init__.cpython-312.pyc
+bestoon/__pycache__/settings.cpython-312.pyc
+bestoon/__pycache__/urls.cpython-312.pyc
+bestoon/__pycache__/wsgi.cpython-312.pyc
