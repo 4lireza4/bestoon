@@ -7,14 +7,13 @@ from rest_framework.routers import SimpleRouter
 app_name = 'accounts'
 
 router = SimpleRouter()
-# router.register(r'users', views.UserViewSet)
+router.register('users', views.UserViewSet, basename='users')
 
 
 
 urlpatterns = [
     path('register/', views.UserRegisterView.as_view(), name='user_register'),
     path('confirm-email/<key>/' , views.ConfirmEmailView.as_view(), name='confirm_email'),
-    path('all/' , views.ShowUsersView.as_view(), name='all'),
     path('login/' , TokenObtainPairView.as_view(), name='login'),
     path('token/refresh/' , TokenRefreshView.as_view(), name='token_refresh'),
 ] + router.urls

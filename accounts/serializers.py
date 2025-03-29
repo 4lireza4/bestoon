@@ -29,9 +29,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return data
 
 
-class UserShowSerializer(serializers.Serializer):
-    email = serializers.EmailField(read_only=True)
-    username = serializers.CharField(read_only=True)
-    password = serializers.CharField(read_only=True)
-    is_admin = serializers.BooleanField(read_only=True)
-    created  = serializers.DateTimeField(read_only=True)
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'username','is_active', 'is_admin' , 'created' , 'updated')
+

@@ -1,13 +1,13 @@
 from rest_framework.permissions import IsAuthenticated , IsAdminUser
 from rest_framework.views import APIView
-from .serializers import UserRegisterSerializer, UserShowSerializer
+from .serializers import UserRegisterSerializer, UserShowSerializer, UsersSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import EmailConfirmation , User
 from django.core.mail import send_mail
 from django.conf import settings
 from .utils import send_confirmation_email
-
+from rest_framework.viewsets import ViewSet , ReadOnlyModelViewSet
 
 
 class UserRegisterView(APIView):
@@ -23,7 +23,7 @@ class UserRegisterView(APIView):
 class ConfirmEmailView(APIView):
     def get(self, request , key):
         try:
-            confirmation = EmailConfirmation.objects.filter(key=key).last()
+            confirmation = EmailConfirmation.objects.get(key=key)
             if confirmation.confirm():
                 return Response({'detail' : 'Email confirmed. You can now log in.'} , status=status.HTTP_200_OK)
             return Response({'detail' : 'Invalid or expired key.'} , status=status.HTTP_400_BAD_REQUEST)
@@ -31,9 +31,11 @@ class ConfirmEmailView(APIView):
             return Response({'detail' : 'Invalid key.'} , status=status.HTTP_400_BAD_REQUEST)
 
 
-class ShowUsersView(APIView):
+
+class UserViewSet(ReadOnlyModelViewSet):
     permission_classes = (IsAdminUser,)
-    def get(self, request):
-        users = User.objects.all()
-        serializer = UserShowSerializer(users, many=True)
-        return Response(serializer.data)
+    queryset  = User.objects.all()
+    serializer_class  = UsersSerializer
+
+
+
