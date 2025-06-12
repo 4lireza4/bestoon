@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from .managers import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(max_length=255 , unique=True )
+    email = models.EmailField(max_length=255 , unique=True)
     username = models.CharField(max_length=55)
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block extra_headers %}
+    <style>
+        /* کلاس برای نمایش متن از راست به چپ */
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* کلاس برای نمایش متن از چپ به راست */
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4" style="max-width: 500px; margin: auto;">
+        <h3 class="text-center text-primary mb-4">ویرایش پروفایل</h3>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_email" class="rtl">ایمیل:</label>
+                {{ form.email }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_username" class="rtl">نام کاربری:</label>
+                {{ form.username }}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-3">ذخیره تغییرات</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

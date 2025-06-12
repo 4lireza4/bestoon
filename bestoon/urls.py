@@ -19,6 +19,8 @@ from django.urls import path , include
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from django.conf.urls.static import static
+from django.conf import settings
 
 
 
@@ -34,7 +36,9 @@ doc_urlpatterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('' , include('web.urls' , namespace='web')),
-    path('accounts/' , include('accounts.urls', namespace='accounts')),
+    path('api/' , include('web.urls' , namespace='web')),
+    path('api/accounts/' , include('accounts.urls', namespace='accounts')),
+    path('accounts/' , include('client_accounts.urls', namespace='client_accounts')),
+    path('' , include('client_web.urls', namespace='client_web')),
 
-] + doc_urlpatterns
+] + doc_urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

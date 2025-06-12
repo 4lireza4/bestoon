@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated , IsAdminUser
 from rest_framework.views import APIView
-from .serializers import UserRegisterSerializer, UserShowSerializer, UsersSerializer
+from .serializers import UserRegisterSerializer, UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import EmailConfirmation , User
@@ -35,7 +35,7 @@ class ConfirmEmailView(APIView):
 class UserViewSet(ReadOnlyModelViewSet):
     permission_classes = (IsAdminUser,)
     queryset  = User.objects.all()
-    serializer_class  = UsersSerializer
+    serializer_class  = UserSerializer
 
 
 

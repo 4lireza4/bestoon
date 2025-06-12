@@ -1,0 +1,13 @@
+.toast {
+    position: fixed;
+    top: 20px;  /* فاصله از بالای صفحه */
+    right: 20px;  /* فاصله از سمت راست */
+    z-index: 9999;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.toast.show {
+    opacity: 1;
+}

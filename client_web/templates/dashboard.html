@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block extra_headers %}
+    <style>
+        .dashboard-container {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Vazir', sans-serif;
+            background-color: #f8f9fa;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .card {
+            border-radius: 10px;
+        }
+        .summary-box {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2 class="text-center mb-4">داشبورد مالی شما</h2>
+    <div class="row">
+        <!-- بخش درآمدها -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3 mb-3">
+                <h5 class="mb-3">💰 درآمدها</h5>
+                <ul class="list-group">
+                    {% for income in incomes %}
+                        <li class="list-group-item">
+                            <span>{{ income.title }}</span>
+                            <span class="text-success">+{{ income.amount }} تومان</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">هیچ درآمدی ثبت نشده است.</li>
+                    {% endfor %}
+                </ul>
+                <div class="summary-box mt-3" style="background: #248d58">
+                    مجموع درآمدها: {{ total_income }} تومان
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'client_web:add_income' %}" class="btn btn-success">+ ثبت درآمد جدید</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- بخش خرج‌ها -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3 mb-3">
+                <h5 class="mb-3">💸 خرج‌ها</h5>
+                <ul class="list-group">
+                    {% for expense in expenses %}
+                        <li class="list-group-item">
+                            <span>{{ expense.title }}</span>
+                            <span class="text-danger">-{{ expense.amount }} تومان</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">هیچ خرجی ثبت نشده است.</li>
+                    {% endfor %}
+                </ul>
+                <div class="summary-box mt-3" style="background: #ff4747;">
+                    مجموع خرج‌ها: {{ total_expense }} تومان
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'client_web:add_expense' %}" class="btn btn-danger">+ ثبت خرج جدید</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

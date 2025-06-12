@@ -1,0 +1,99 @@
+{#<nav class="navbar navbar-expand-lg navber-dark bg-dark">#}
+{#  <div class="container-fluid">#}
+{#    <div class="navbar-nav">#}
+{#        <a class="navbar-brand" style="color: aliceblue;" href="{% url 'client_accounts:home' %}">Home</a>#}
+{#        {% if request.user.is_authenticated %}#}
+{#        <a class="navbar-brand" style="color: aliceblue;" href="{% url 'client_accounts:logout' %}">Logout</a>#}
+{#            <a class="navbar-brand" style="color: aliceblue;" href="">{{ request.user.email }}</a>#}
+{#        {%  else %}#}
+{#        <a class="navbar-brand" style="color: aliceblue;" href="{% url 'client_accounts:register' %}">Register</a>#}
+{#        <a class="navbar-brand" style="color: aliceblue;" href="{% url 'client_accounts:login' %}">Login</a>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#  </div>#}
+{#</nav>#}
+{% load  static %}
+
+<div style="font-family: Vazir">
+    <!-- header section strats -->
+    <header class="header_section long_section px-0" style="font-family: Vazir">
+      <nav class="navbar navbar-expand-lg custom_nav-container ">
+        <a class="navbar-brand" href="{% url 'client_web:home' %}">
+            <span>
+                <img src="{% static 'img/calculator(2).png' %}" alt="Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                Bestoon
+            </span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class=""> </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+            <ul class="navbar-nav  ">
+                <li class="nav-item active">
+                <a class="nav-link" href="{% url 'client_web:home' %}">Home <span class="sr-only">(current)</span></a>
+              </li>
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'client_web:dashboard' %}"> Dashboard</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                <a class="nav-link" href="">about us</a>
+              </li>
+            </ul>
+          </div>
+
+
+
+
+
+            {% if request.user.is_authenticated %}
+          <div class="quote_btn-container">
+            <a href="{% url 'client_accounts:profile' %}" style>
+              <span style="color: dodgerblue">
+                {{ request.user.username }}
+              </span>
+              <i class="fa fa-user" aria-hidden="true" style="color: dodgerblue"></i>
+            </a>
+            <form class="form-inline">
+              <button class="btn  my-2 my-sm-0 nav_search-btn " type="submit">
+                  <a href="{% url 'client_accounts:logout' %}" style="color: red" >Logout</a>
+{#                <i class="fa fa-" aria-hidden="true"></i>#}
+              </button>
+            </form>
+          </div>
+            {% else %}
+                <div class="quote_btn-container">
+            <a href="{% url 'client_accounts:login' %}">
+              <span>
+                ورود
+              </span>
+              <i class="fa fa-user" aria-hidden="true"></i>
+            </a>
+                    <a href="{% url 'client_accounts:register' %}" style>
+              <span style="color: dodgerblue">
+                ثبت نام
+              </span>
+              <i class="fa fa-user" aria-hidden="true" style="color: dodgerblue"></i>
+            </a>
+            <form class="form-inline">
+              <button class="btn  my-5 my-sm-0 nav_search-btn-btn" type="submit">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </form>
+          </div>
+
+
+
+
+
+            {% endif %}
+
+        </div>
+      </nav>
+    </header>
+</div>
+

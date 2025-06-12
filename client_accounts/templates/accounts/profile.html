@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block extra_headers %}
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f0f8ff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.2);
+            text-align: right;
+            direction: rtl;
+            border: 2px solid #007bff;
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .profile-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+        }
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+        .btn-primary {
+            background: #007bff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h2>پروفایل کاربری</h2>
+        <p>مشخصات حساب شما</p>
+    </div>
+    <div class="profile-item">
+        <strong>ایمیل:</strong> {{ user.email }}
+    </div>
+    <div class="profile-item">
+        <strong>نام کاربری:</strong> {{ user.username }}
+    </div>
+    <div class="profile-item">
+        <strong>تاریخ عضویت:</strong> {{ user.created|date:"Y/m/d" }}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'client_accounts:profile_edit' %}" class="btn btn-primary">ویرایش پروفایل</a>
+    </div>
+</div>
+{% endblock %}
