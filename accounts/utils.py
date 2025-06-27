@@ -1,10 +1,14 @@
 from .models import User , EmailConfirmation
 from django.core.mail import send_mail
 from django.conf import settings
+from django.urls import reverse
 
-def send_confirmation_email(user):
+
+def send_confirmation_email(user , request):
     confirmation = EmailConfirmation.objects.create(user=user)
-    confirm_url = f"http://localhost:8000/accounts/confirm-email/{confirmation.key}/"
+    relative_url = reverse('client_accounts:confirm_email', kwargs={'key': confirmation.key})
+    confirm_url = request.build_absolute_uri(relative_url)
+
     send_mail(
         'Confirm Your Email',
         f'Click this link to confirm your email: {confirm_url}',

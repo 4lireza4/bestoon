@@ -1,3 +1,5 @@
+from audioop import reverse
+
 from django.shortcuts import render,  redirect
 from django.views import View
 from .forms import RegisterForm , UserLoginForm , UserProfileEditForm
@@ -9,42 +11,46 @@ from web.models import Income , Expense
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
-class UserRegisterView(View):
+
+class UserRegisterView(CreateView):
+    model = User
     form_class = RegisterForm
     template_name = 'accounts/register.html'
+    success_url = reverse_lazy('client_accounts:login')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.info(request, 'شما قبلاً وارد شده‌اید.' , 'info')
+            messages.info(request, 'شما قبلاً وارد شده‌اید.', 'info')
             return redirect('client_web:home')
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
-        form = self.form_class()
 
-        return render(request , self.template_name ,{'form':form} )
+    def form_valid(self, form):
+        user =  form.save()
+        send_confirmation_email(user , self.request)
+        messages.success(self.request, 'Verification email sent. Check your inbox.')
+        return super().form_valid(form)
 
-    def post(self, request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = form.save()
-            send_confirmation_email(user)
-            messages.success(request, 'Verification email sent. Check your inbox.')
-            return redirect('client_accounts:login')
-        return render(request , self.template_name ,{'form':form})
 
-class ConfirmEmail(View):
+
+class ConfirmEmailView(View):
     template_name = 'accounts/confirm_email.html'
-    def get(self , request, key):
+
+    def get(self, request, key):
+        context = {}
+
         try:
             confirmation = EmailConfirmation.objects.get(key=key)
             if confirmation.confirm():
-                return render(request, self.template_name, {'message': 'Email confirmed. You can now log in.'})
-            return render(request, self.template_name, {'error': 'Invalid or expired key.'})
+                context['message'] = 'Email confirmed. You can now log in.'
+            else:
+                context['error'] = 'Invalid or expired confirmation key.'
         except EmailConfirmation.DoesNotExist:
-            return render(request, self.template_name, {'error': 'Invalid key.'})
+            context['error'] = 'Invalid confirmation key.'
+
+        return render(request, self.template_name, context)
 
 
 class UserLoginView(View):
