@@ -1,10 +1,15 @@
 from django.db.models import Sum
+from django.forms import BaseModelForm
+from django.http import HttpResponse
 from django.shortcuts import render , redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ExpenseForm , IncomeForm
 from web.models import Expense, Income
 from django.contrib import messages
+from django.views.generic import CreateView
+from django.urls import reverse , reverse_lazy
+
 
 class HomeView(View):
     def get(self , request):
@@ -30,39 +35,25 @@ class DashboardView(LoginRequiredMixin , View):
         return render(request , 'dashboard.html' , context=context)
 
 
-class AddExpenseView(View):
+class AddExpenseView(LoginRequiredMixin , CreateView):
+    model = Expense
     form_class = ExpenseForm
-    template_name = "add_expense.html"
-    def get(self, request):
-        form = self.form_class()
-        return render(request, self.template_name, {"form": form})
+    template_name = 'add_expense.html'
+    success_url = reverse_lazy('client_web:dashboard')
 
-    def post(self, request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            expense = form.save(commit=False)
-            expense.user = request.user
-            expense.save()
-            messages.success(request, "خرج جدید با موفقیت ثبت شد!" , 'success')
-            return redirect("client_web:dashboard")  # تغییر بده به اسم صفحه داشبوردت
-        return render(request, self.template_name, {"form": form})
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        form.instance.user = self.request.user
+        messages.success(self.request, "خرج جدید با موفقیت ثبت شد!" , 'success')
+        return super().form_valid(form)
 
 
-class AddIncomeView(LoginRequiredMixin , View):
+class AddIncomeView(LoginRequiredMixin , CreateView):
+    model = Income
     form_class = IncomeForm
-    template_name = "add_income.html"
-    def get(self, request):
-        form = self.form_class()
-        return render(request, self.template_name, {"form": form})
+    template_name = 'add_income.html'
+    success_url = reverse_lazy('client_web:dashboard')
 
-    def post(self, request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            income = form.save(commit=False)
-            income.user = request.user
-            income.save()
-            messages.success(request, "درآمد جدید با موفقیت ثبت شد!" , 'success')
-            return redirect("client_web:dashboard")
-        return render(request, self.template_name, {"form": form})
-
-    
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        form.instance.user = self.request.user
+        messages.success(self.request, "درآمد جدید با موفقیت ثبت شد!" , 'success')
+        return super().form_valid(form)
