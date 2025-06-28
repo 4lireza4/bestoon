@@ -9,7 +9,7 @@ from web.models import Income , Expense
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
-from django.views.generic import CreateView , FormView , RedirectView , TemplateView
+from django.views.generic import CreateView , FormView , RedirectView , TemplateView , UpdateView
 from .mixins import AnonymousRequiredMixin
 
 class UserRegisterView(CreateView):
@@ -80,20 +80,19 @@ class UserProfileView(LoginRequiredMixin , TemplateView):
     template_name = 'accounts/profile.html'
 
 
-class UserProfileEditView(LoginRequiredMixin , View):
+class UserProfileEditView(LoginRequiredMixin , UpdateView):
+    model = User
     template_name = 'accounts/edit_profile.html'
     form_class = UserProfileEditForm
-    def get(self, request):
-        form = self.form_class(instance=request.user)
-        return render(request , self.template_name ,{'form':form})
+    success_url = reverse_lazy('client_accounts:profile')
 
-    def post(self, request):
-        form = self.form_class(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request ,"پروفایل شما با موفقیت بروزرسانی شد." , 'success')
-            return redirect('client_accounts:profile')
-        return render(request , self.template_name ,{'form':form})
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request ,"پروفایل شما با موفقیت بروزرسانی شد." , 'success')
+        return super().form_valid(form)
+
 
 class UserPasswordResetView(auth_views.PasswordResetView):
     template_name = 'accounts/password_reset_form.html'
