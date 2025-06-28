@@ -7,32 +7,36 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ExpenseForm , IncomeForm
 from web.models import Expense, Income
 from django.contrib import messages
-from django.views.generic import CreateView
+from django.views.generic import CreateView , TemplateView
 from django.urls import reverse , reverse_lazy
 
 
-class HomeView(View):
-    def get(self , request):
-        return render(request, 'home.html')
+class HomeView(TemplateView):
+    template_name = 'home.html'
 
 
 
-class DashboardView(LoginRequiredMixin , View):
-    def get(self , request):
-        expenses = Expense.objects.filter(user=request.user).order_by('-created')
-        incomes = Income.objects.filter(user=request.user).order_by('-created')
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user = self.request.user
+        expenses = Expense.objects.filter(user=user).order_by('-created')
+        incomes = Income.objects.filter(user=user).order_by('-created')
 
         total_expense = expenses.aggregate(total_expense=Sum('amount'))['total_expense'] or 0
         total_income = incomes.aggregate(total_income=Sum('amount'))['total_income'] or 0
 
-        context = {
+        context.update({
             'expenses': expenses,
             'incomes': incomes,
             'total_expense': total_expense,
             'total_income': total_income
-        }
+        })
 
-        return render(request , 'dashboard.html' , context=context)
+        return context
 
 
 class AddExpenseView(LoginRequiredMixin , CreateView):
