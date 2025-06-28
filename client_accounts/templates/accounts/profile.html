@@ -46,13 +46,13 @@
         <p>مشخصات حساب شما</p>
     </div>
     <div class="profile-item">
-        <strong>ایمیل:</strong> {{ user.email }}
+        <strong>ایمیل:</strong> {{ request.user.email }}
     </div>
     <div class="profile-item">
-        <strong>نام کاربری:</strong> {{ user.username }}
+        <strong>نام کاربری:</strong> {{ request.user.username }}
     </div>
     <div class="profile-item">
-        <strong>تاریخ عضویت:</strong> {{ user.created|date:"Y/m/d" }}
+        <strong>تاریخ عضویت:</strong> {{ request.user.created|date:"Y/m/d" }}
     </div>
     <div class="text-center mt-3">
         <a href="{% url 'client_accounts:profile_edit' %}" class="btn btn-primary">ویرایش پروفایل</a>

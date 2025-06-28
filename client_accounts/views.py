@@ -1,5 +1,3 @@
-from audioop import reverse
-
 from django.shortcuts import render,  redirect
 from django.views import View
 from .forms import RegisterForm , UserLoginForm , UserProfileEditForm
@@ -11,8 +9,8 @@ from web.models import Income , Expense
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-
+from django.views.generic import CreateView , FormView , RedirectView , TemplateView
+from .mixins import AnonymousRequiredMixin
 
 class UserRegisterView(CreateView):
     model = User
@@ -53,32 +51,23 @@ class ConfirmEmailView(View):
         return render(request, self.template_name, context)
 
 
-class UserLoginView(View):
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            messages.info(request, 'شما قبلاً وارد شده‌اید.' , 'info')
-            return redirect('client_web:home')
-        return super().dispatch(request, *args, **kwargs)
-
+class UserLoginView(AnonymousRequiredMixin , FormView):
     form_class = UserLoginForm
     template_name = 'accounts/login.html'
-    def get(self, request):
-        form = self.form_class()
-        return render(request , self.template_name ,{'form':form})
+    success_url = reverse_lazy('client_web:home')
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        user = authenticate(self.request, email=cd['email'], password=cd['password'])
+        if user is not None:
+            login(self.request, user)
+            messages.success(self.request, 'با موفقیت وارد حساب کاربری خود شدید.', 'info')
+            return super().form_valid(form)
+        else:
+            messages.error(self.request , 'ایمیل یا پسوورد اشتباه است.', 'danger')
+            return self.form_invalid(form)
 
 
-    def post(self, request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request, email=cd['email'], password=cd['password'])
-            if user is not None:
-                login(request, user)
-                messages.success(request, 'با موفقیت وارد حساب کاربری خود شدید.', 'info')
-                return redirect('client_web:home')
-            messages.error(request , 'ایمیل یا پسوورد اشتباه است.', 'danger')
-        return render(request , self.template_name ,{'form':form})
 
 class UserLogoutView(LoginRequiredMixin , View):
     def get(self, request):
@@ -87,12 +76,8 @@ class UserLogoutView(LoginRequiredMixin , View):
         return redirect('client_web:home')
 
 
-class UserProfileView(LoginRequiredMixin , View):
+class UserProfileView(LoginRequiredMixin , TemplateView):
     template_name = 'accounts/profile.html'
-    def get(self , request):
-        user = request.user
-        return render(request , self.template_name ,{'user':user})
-
 
 
 class UserProfileEditView(LoginRequiredMixin , View):
